@@ -48,7 +48,9 @@ public class ClothPhysicTest : MonoBehaviour
     [SerializeField]
     private float initSpacing;      // Initial displacement
     [SerializeField]
-    GameObject clothNodePrefab;     // 
+    GameObject clothNodePrefab;     //
+    [SerializeField]
+    private float clothMass; 
     [SerializeField]
     private List<GameObject> clothNodes = new List<GameObject>();
 
