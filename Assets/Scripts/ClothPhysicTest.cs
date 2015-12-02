@@ -38,10 +38,8 @@ public class ClothPhysicTest : MonoBehaviour
 
     Vector3 ApplySpringDampers()
     {
-
+        return Vector3.zero;
     }
-
-
 
     [SerializeField]
     private int clothWidth = 2;     // Numbers of nodes in the width
