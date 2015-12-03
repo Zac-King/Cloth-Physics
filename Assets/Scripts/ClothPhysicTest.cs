@@ -31,14 +31,12 @@ public class ClothPhysicTest : MonoBehaviour
         //Debug.Log("Spawn Nodes");
     }
 
-    //Vector3 ApplyGravity()
-    //{
-    //    return Vector3.zero;
-    //}
-
-    Vector3 ApplySpringDampers()
+    private void AttachSprings()
     {
-        return Vector3.zero;
+        foreach (GameObject g in clothNodes)
+        {
+
+        }
     }
 
     [SerializeField]
@@ -49,9 +47,14 @@ public class ClothPhysicTest : MonoBehaviour
     private float initSpacing;      // Initial displacement
     [SerializeField]
     GameObject clothNodePrefab;     //
+    //[SerializeField]
+    //private float clothMass;
     [SerializeField]
-    private float clothMass; 
+    private float gravityMod = 1;
+    
     [SerializeField]
     private List<GameObject> clothNodes = new List<GameObject>();
+
+    private List<Spring> clothSprings = new List<Spring>();
 
 }

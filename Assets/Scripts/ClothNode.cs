@@ -12,5 +12,5 @@ public class ClothNode : MonoBehaviour
 
     public bool locked;
     public Vector3 velocity;
-    public List<SpringDamper> nodeDampers; // 
+    private Vector3 gravity = new Vector3(0, 9.8f, 0);
 }
