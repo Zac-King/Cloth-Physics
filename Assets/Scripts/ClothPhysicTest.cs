@@ -40,35 +40,47 @@ public class ClothPhysicTest : MonoBehaviour
             //check to see is the last node is on the same row as current // if true spring to left node
 
             if (i > clothWidth - 1) // spring to above node
+            {
                 if (clothNodes[i - clothWidth])
                 {
                     GameObject t = new GameObject("Spring");
                     t.AddComponent<Spring>();
-                    t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - clothWidth], 8f);
-                    
+                    t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - clothWidth], clothStiffness, 175);
+
                     clothSprings.Add(t);
                 }
+            }
+
+            if ((i % clothWidth != clothWidth - 1) && i >= clothWidth) // spring to above right node
+            {
+                GameObject t = new GameObject("Spring");
+                t.AddComponent<Spring>();
+                t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - clothWidth], clothStiffness, 175);
+
+                clothSprings.Add(t);
+            }
 
             if (i > 0)  // spring to left node
+            {
                 if (i % clothWidth != 0)
                 {
                     GameObject t = new GameObject("Spring");
-                    
+
                     t.AddComponent<Spring>();
-                    t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - 1], 8f);
+                    t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - 1], clothStiffness, 175);
 
                     clothSprings.Add(t);
                 }
-            
+            }
         }
     }
  
 
-    void Update()
+    void FixedUpdate()
     {
         foreach(GameObject n in clothNodes)
         {
-            n.GetComponent<ClothNode>().SimulateClothForce();
+            n.GetComponent<ClothNode>().SimulateClothForce(Time.deltaTime, gravityMod);
         }
 
         foreach (GameObject a in clothSprings)
@@ -84,6 +96,8 @@ public class ClothPhysicTest : MonoBehaviour
     private int clothHeight = 2;    // Numbers of nodes in the height
     [SerializeField]
     private float initSpacing;      // Initial displacement
+    [SerializeField]
+    private float clothStiffness;
     [SerializeField]
     GameObject clothNodePrefab;     // tester Prefab
     //[SerializeField]
