@@ -28,14 +28,53 @@ public class ClothPhysicTest : MonoBehaviour
             }
             clothNodes.Add(go);
         }
-        //Debug.Log("Spawn Nodes");
+        Debug.Log("Spawn Nodes");
+        
     }
 
+    [ContextMenu("Attach Springs")]
     private void AttachSprings()
     {
-        foreach (GameObject g in clothNodes)
+        for(int i = 0; i < clothNodes.Count ; i++)
         {
+            //check to see is the last node is on the same row as current // if true spring to left node
 
+            if (i > clothWidth - 1) // spring to above node
+                if (clothNodes[i - clothWidth])
+                {
+                    GameObject t = new GameObject("Spring");
+                    t.AddComponent<Spring>();
+                    t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - clothWidth], 8f);
+                    
+                    clothSprings.Add(t);
+                }
+
+            if (i > 0)  // spring to left node
+                if (i % clothWidth != 0)
+                {
+                    GameObject t = new GameObject("Spring");
+                    
+                    t.AddComponent<Spring>();
+                    t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - 1], 8f);
+
+                    clothSprings.Add(t);
+                }
+            
+        }
+    }
+ 
+
+    void Update()
+    {
+        foreach(GameObject n in clothNodes)
+        {
+            n.GetComponent<ClothNode>().SimulateClothForce();
+        }
+
+        foreach (GameObject a in clothSprings)
+        {
+            a.GetComponent<Spring>().ComputeSpringForces();
+            a.GetComponent<Spring>().DrawSpring();
         }
     }
 
@@ -46,15 +85,14 @@ public class ClothPhysicTest : MonoBehaviour
     [SerializeField]
     private float initSpacing;      // Initial displacement
     [SerializeField]
-    GameObject clothNodePrefab;     //
+    GameObject clothNodePrefab;     // tester Prefab
     //[SerializeField]
     //private float clothMass;
     [SerializeField]
     private float gravityMod = 1;
     
-    [SerializeField]
-    private List<GameObject> clothNodes = new List<GameObject>();
+    public List<GameObject> clothNodes;
 
-    private List<Spring> clothSprings = new List<Spring>();
+    public List<GameObject> clothSprings;
 
 }

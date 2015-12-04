@@ -7,7 +7,11 @@ public class ClothNode : MonoBehaviour
     // What does it mean to be a cloth node?
     public void SimulateClothForce()
     {
-
+        if (!locked)
+        {
+            gameObject.transform.position += velocity * Time.deltaTime;
+            velocity = Vector3.zero;
+        }
     }
 
     public bool locked;
