@@ -9,6 +9,7 @@ public class ClothNode : MonoBehaviour
     {
         if (!locked)
         {
+            velocity += gravity;
             gameObject.transform.position += velocity * Time.deltaTime;
             velocity = Vector3.zero;
         }
@@ -16,5 +17,5 @@ public class ClothNode : MonoBehaviour
 
     public bool locked;
     public Vector3 velocity;
-    private Vector3 gravity = new Vector3(0, 9.8f, 0);
+    private Vector3 gravity = new Vector3(0, -9.8f, 0);
 }
