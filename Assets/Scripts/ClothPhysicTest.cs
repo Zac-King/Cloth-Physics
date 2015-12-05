@@ -39,19 +39,7 @@ public class ClothPhysicTest : MonoBehaviour
         {
             //check to see is the last node is on the same row as current // if true spring to left node
 
-            if (i > clothWidth - 1) // spring to above node
-            {
-                if (clothNodes[i - clothWidth])
-                {
-                    GameObject t = new GameObject("Spring");
-                    t.AddComponent<Spring>();
-                    t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - clothWidth], clothStiffness, 175);
-
-                    clothSprings.Add(t);
-                }
-            }
-
-            if ((i % clothWidth != clothWidth - 1) && i >= clothWidth) // spring to above right node
+            if ((i > clothWidth - 1) && (clothNodes[i - clothWidth])) // spring to above node
             {
                 GameObject t = new GameObject("Spring");
                 t.AddComponent<Spring>();
@@ -60,17 +48,34 @@ public class ClothPhysicTest : MonoBehaviour
                 clothSprings.Add(t);
             }
 
-            if (i > 0)  // spring to left node
+
+            if ((i > 0) && (i % clothWidth != 0))  // spring to left node
             {
-                if (i % clothWidth != 0)
-                {
-                    GameObject t = new GameObject("Spring");
+                GameObject t = new GameObject("Spring");
 
-                    t.AddComponent<Spring>();
-                    t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - 1], clothStiffness, 175);
+                t.AddComponent<Spring>();
+                t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - 1], clothStiffness, 175);
 
-                    clothSprings.Add(t);
-                }
+                clothSprings.Add(t);
+            }
+
+
+            if ((i % clothWidth != clothWidth - 1) && i >= clothWidth) // spring to above right node
+            {
+                GameObject t = new GameObject("Spring");
+                t.AddComponent<Spring>();
+                t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - clothWidth + 1], clothStiffness, 175);
+
+                clothSprings.Add(t);
+            }
+
+            if ((i % clothWidth != 0) && i >= clothWidth) // spring to above left node
+            {
+                GameObject t = new GameObject("Spring");
+                t.AddComponent<Spring>();
+                t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - clothWidth - 1], clothStiffness, 175);
+
+                clothSprings.Add(t);
             }
         }
     }
@@ -80,7 +85,7 @@ public class ClothPhysicTest : MonoBehaviour
     {
         foreach(GameObject n in clothNodes)
         {
-            n.GetComponent<ClothNode>().SimulateClothForce(Time.deltaTime, gravityMod);
+            n.GetComponent<ClothNode>().SimulateClothForce(Time.fixedDeltaTime, gravityMod);
         }
 
         foreach (GameObject a in clothSprings)

@@ -9,17 +9,22 @@ public class ClothNode : MonoBehaviour
     {
         if (!locked)
         {
-            accleration += gravity * _gravMod;
-            velocity += mass * accleration;
-            gameObject.transform.position += velocity * _dTime;
-            velocity = Vector3.zero;
-            accleration = Vector3.zero;
-        }
+            // force of Gravity            
+            force = gravity * mass;
+
+            // F = ma   ||  a = f/m
+            accleration = force / mass;
+
+            velocity += accleration * Time.fixedDeltaTime;
+            
+            gameObject.transform.position += velocity * Time.fixedDeltaTime;
+        } 
     }
 
     public bool locked = false;
-    public float mass = .2f;
+    public float mass = 1;
     public Vector3 accleration = Vector3.zero;
     public Vector3 velocity = Vector3.zero;
-    private Vector3 gravity = new Vector3(0, -1.8f, 0);
+    public Vector3 force = Vector3.zero;
+    public Vector3 gravity = new Vector3(0, 0, 0);
 }
