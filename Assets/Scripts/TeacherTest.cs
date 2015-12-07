@@ -12,14 +12,15 @@ public class TeacherTest : MonoBehaviour {
 
     public float stiffness;
     public float dampen;
+    //public float tension;
 	// Update is called once per frame
 	void Update ()
     {
 	    foreach(Spring s in springs)
         {
-            s.k = stiffness;
-            s.b = dampen;
-            
+            s.springConstant = stiffness;
+            s.damperConstant = dampen;
+            //s.d = tension;
         }
 	}
 }

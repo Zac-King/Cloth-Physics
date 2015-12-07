@@ -15,7 +15,7 @@ public class ClothPhysicTest : MonoBehaviour
             GameObject go = Instantiate(clothNodePrefab);
 
             go.transform.parent = gameObject.transform; // parenting it to the Game Object with this script
-            go.transform.position = placement;  // Assigning 
+            go.transform.position = placement;          // Assigning 
             
             if ((i % clothWidth) == 0 )
             {
@@ -79,21 +79,25 @@ public class ClothPhysicTest : MonoBehaviour
             }
         }
     }
- 
 
     void FixedUpdate()
     {
-        foreach(GameObject n in clothNodes)
+        foreach (GameObject s in clothSprings)  // Updating Springs
         {
-            n.GetComponent<ClothNode>().SimulateClothForce(Time.fixedDeltaTime, gravityMod);
+            s.GetComponent<Spring>().UpdateSpring();
         }
 
-        foreach (GameObject a in clothSprings)
+        foreach (GameObject n in clothNodes) // Updating Nodes
         {
-            a.GetComponent<Spring>().ComputeSpringForces();
-            a.GetComponent<Spring>().DrawSpring();
-        }
+            n.GetComponent<ClothNode>().UpdateClothNode(gravityMod, Time.deltaTime);
+        }   
     }
+
+
+    // Test
+    public float speed = 1;
+    //Test
+
 
     [SerializeField]
     private int clothWidth = 2;     // Numbers of nodes in the width
