@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class ClothNode : MonoBehaviour
 {
     // What does it mean to be a cloth node?
-    public void UpdateClothNode(float _gravMod, float _dTime)
+    public void UpdateClothNode(float _gravMod, float speed)
     {
         if (!locked)
         {
@@ -17,10 +17,10 @@ public class ClothNode : MonoBehaviour
 
             velocity = accleration * Time.fixedDeltaTime;
             
-            gameObject.transform.position += velocity * _dTime;
+            gameObject.transform.position += velocity * Time.fixedDeltaTime;
         }
         force = Vector3.zero;
-        accleration = Vector3.zero;
+        //accleration = Vector3.zero;
     }
 
     public bool locked = false;
@@ -28,5 +28,5 @@ public class ClothNode : MonoBehaviour
     public Vector3 accleration = Vector3.zero;
     public Vector3 velocity = Vector3.zero;
     public Vector3 force = Vector3.zero;
-    public Vector3 gravity = new Vector3(0, -2, 0);
+    public Vector3 gravity = new Vector3(0, -9, 0);
 }

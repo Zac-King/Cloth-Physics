@@ -89,7 +89,7 @@ public class ClothPhysicTest : MonoBehaviour
 
         foreach (GameObject n in clothNodes) // Updating Nodes
         {
-            n.GetComponent<ClothNode>().UpdateClothNode(gravityMod, Time.deltaTime);
+            n.GetComponent<ClothNode>().UpdateClothNode(gravityMod, speed);
         }   
     }
 

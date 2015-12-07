@@ -64,9 +64,9 @@ public class Spring : MonoBehaviour
     public GameObject P1;   // Point 1
     public GameObject P2;   // Point 2
     [SerializeField]
-    public float springConstant;    // Stiffness    // constant
+    public float springConstant;    // Spring Constant  // constant
     [SerializeField]
-    public float restLength;        // Rest Length  // constant
+    public float restLength;        // Rest Length      // constant
     [SerializeField]
-    public float damperConstant;    // Damper       // constant
+    public float damperConstant;    // Damper           // constant
 }

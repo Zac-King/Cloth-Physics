@@ -12,7 +12,7 @@ public class TeacherTest : MonoBehaviour {
 
     public float stiffness;
     public float dampen;
-    //public float tension;
+    public float tension;
 	// Update is called once per frame
 	void Update ()
     {
@@ -20,7 +20,7 @@ public class TeacherTest : MonoBehaviour {
         {
             s.springConstant = stiffness;
             s.damperConstant = dampen;
-            //s.d = tension;
+            s.springConstant = tension;
         }
 	}
 }
