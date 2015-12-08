@@ -35,10 +35,10 @@ public class Spring : MonoBehaviour
         Vector3 direction       = displacement / distance;
 
         // 1 Dimension velocities b/c a spring exists in 1 Dimension      // Used in Dampen Force formula
-        float node1Velocity = Vector3.Dot(displacement.normalized, p1node.velocity);
-        float node2Velocity = Vector3.Dot(displacement.normalized, p2node.velocity);
+        float node1Velocity = Vector3.Dot( displacement.normalized, p1node.velocity );
+        float node2Velocity = Vector3.Dot( displacement.normalized, p2node.velocity );
 
-        // Spring Force =  - spring Constant * (rest length - distance)
+        // Spring Force = -spring factor * (distance - rest length)
         float Fspring = -springConstant * ( distance - restLength );
         // Dampen Force = -Dampen Factor * (difference of velocity)
         float Fdampen = -damperConstant * ( node2Velocity - node1Velocity );
