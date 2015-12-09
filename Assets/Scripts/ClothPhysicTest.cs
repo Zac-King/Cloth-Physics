@@ -7,14 +7,13 @@ public class ClothPhysicTest : MonoBehaviour
     [ContextMenu("Spawn Nodes")]
     private void SpawnNodes()
     {
-
         Vector3 placement = Vector3.zero;
 
         for(int i = 1; i <= (clothWidth * clothHeight); i++)
         {
             GameObject go = Instantiate(clothNodePrefab);
 
-            go.transform.parent = gameObject.transform; // parenting it to the Game Object with this script
+            go.transform.parent = NodesHeir.transform; // parenting it to the Game Object with this script
             go.transform.position = placement;          // Assigning 
             
             if ((i % clothWidth) == 0 )
@@ -28,8 +27,7 @@ public class ClothPhysicTest : MonoBehaviour
             }
             clothNodes.Add(go);
         }
-        Debug.Log("Spawn Nodes");
-        
+        //Debug.Log("Spawn Nodes");
     }
 
     [ContextMenu("Attach Springs")]
@@ -45,6 +43,8 @@ public class ClothPhysicTest : MonoBehaviour
                 t.AddComponent<Spring>();
                 t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - clothWidth], 10, -1);
 
+                t.transform.parent = SpringsHeir.transform;
+
                 clothSprings.Add(t);
             }
 
@@ -56,6 +56,8 @@ public class ClothPhysicTest : MonoBehaviour
                 t.AddComponent<Spring>();
                 t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - 1], 10, -1);
 
+                t.transform.parent = SpringsHeir.transform;
+
                 clothSprings.Add(t);
             }
 
@@ -66,6 +68,8 @@ public class ClothPhysicTest : MonoBehaviour
                 t.AddComponent<Spring>();
                 t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - clothWidth + 1], 10, -1);
 
+                t.transform.parent = SpringsHeir.transform;
+
                 clothSprings.Add(t);
             }
 
@@ -74,6 +78,8 @@ public class ClothPhysicTest : MonoBehaviour
                 GameObject t = new GameObject("Spring");
                 t.AddComponent<Spring>();
                 t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - clothWidth - 1], 10, -1);
+
+                t.transform.parent = SpringsHeir.transform;
 
                 clothSprings.Add(t);
             }
@@ -89,7 +95,7 @@ public class ClothPhysicTest : MonoBehaviour
         }
         foreach (GameObject n in clothNodes) // Updating Nodes
         {
-            n.GetComponent<ClothNode>().UpdateClothNode(gravityMod);
+            n.GetComponent<ClothNode>().UpdateClothNode(gravityMod, windMod);
         }
     }
 
@@ -106,9 +112,25 @@ public class ClothPhysicTest : MonoBehaviour
     private float initSpacing;      // Initial displacement
     [SerializeField]
     GameObject clothNodePrefab;     // tester Prefab
+
     [SerializeField]
     private float gravityMod = 1;
-    
+    [SerializeField]
+    private float windMod = 1;
+
+    [SerializeField]
+    private GameObject NodesHeir;
+    [SerializeField]
+    private GameObject SpringsHeir;
+
     public List<GameObject> clothNodes;
     public List<GameObject> clothSprings;
+    public List<GameObject> aeroTriangles;
+
+    struct Triangle
+    {
+        GameObject sideA;
+        GameObject sideB;
+        GameObject sideC;
+    }
 }

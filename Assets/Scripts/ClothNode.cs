@@ -5,13 +5,13 @@ using System.Collections.Generic;
 public class ClothNode : MonoBehaviour
 {
     // What does it mean to be a cloth node?
-    public void UpdateClothNode(float _gravMod)
+    public void UpdateClothNode(float _gravMod, float _windMod)
     {
         if (!locked)
         {
             // force of Gravity            
             force += (gravity * _gravMod);
-            force += new Vector3(.2f, 0, 0); // fake wind
+            force += new Vector3(.2f, 0, 0) * _windMod;
             // F = ma   ||  a = f/m
             acceleration = force / mass;
 
