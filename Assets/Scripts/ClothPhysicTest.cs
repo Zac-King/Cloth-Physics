@@ -43,7 +43,7 @@ public class ClothPhysicTest : MonoBehaviour
             {
                 GameObject t = new GameObject("Spring");
                 t.AddComponent<Spring>();
-                t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - clothWidth], springCon, 175);
+                t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - clothWidth], 10, -1);
 
                 clothSprings.Add(t);
             }
@@ -54,7 +54,7 @@ public class ClothPhysicTest : MonoBehaviour
                 GameObject t = new GameObject("Spring");
 
                 t.AddComponent<Spring>();
-                t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - 1], springCon, 175);
+                t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - 1], 10, -1);
 
                 clothSprings.Add(t);
             }
@@ -64,7 +64,7 @@ public class ClothPhysicTest : MonoBehaviour
             {
                 GameObject t = new GameObject("Spring");
                 t.AddComponent<Spring>();
-                t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - clothWidth + 1], springCon, 175);
+                t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - clothWidth + 1], 10, -1);
 
                 clothSprings.Add(t);
             }
@@ -73,31 +73,12 @@ public class ClothPhysicTest : MonoBehaviour
             {
                 GameObject t = new GameObject("Spring");
                 t.AddComponent<Spring>();
-                t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - clothWidth - 1], springCon, 175);
+                t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - clothWidth - 1], 10, -1);
 
                 clothSprings.Add(t);
             }
         }
     }
-
-    //[ContextMenu("Reset Grid")]
-    //private void ResetGrid()
-    //{
-    //    foreach(GameObject n in clothNodes)
-    //    {
-    //        Destroy(n);
-    //    }
-    //    foreach (GameObject s in clothSprings)
-    //    {
-    //        Destroy(s);
-    //    }
-
-    //    clothNodes      = new List<GameObject>();
-    //    clothSprings    = new List<GameObject>();
-
-    //    SpawnNodes();
-    //    AttachSprings();
-    //}
 
     void FixedUpdate()
     {
@@ -110,11 +91,11 @@ public class ClothPhysicTest : MonoBehaviour
         {
             n.GetComponent<ClothNode>().UpdateClothNode(gravityMod);
         }
+    }
 
-        //foreach (GameObject s in clothSprings)  // Updating Springs
-        //{
-        //    s.GetComponent<Spring>().UpdateSpring();
-        //} 
+    public void SetGravityMod(float g)
+    {
+        gravityMod = g;
     }
 
     [SerializeField]
@@ -127,9 +108,6 @@ public class ClothPhysicTest : MonoBehaviour
     GameObject clothNodePrefab;     // tester Prefab
     [SerializeField]
     private float gravityMod = 1;
-
-    [SerializeField]
-    private float springCon = 20;
     
     public List<GameObject> clothNodes;
     public List<GameObject> clothSprings;

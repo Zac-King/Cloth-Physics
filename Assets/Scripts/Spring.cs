@@ -3,21 +3,12 @@ using System.Collections;
 
 public class Spring : MonoBehaviour
 {
-    public float Vec3Distance(Vector3 a, Vector3 b)
-    {
-        float dx = b.x - a.x;
-        float dy = b.y - a.y;
-        float dz = b.z - a.z;
-
-        return Mathf.Sqrt(dx * dx + dy * dy + dz + dz);
-    }
-
     public void MakeSpring(GameObject _p1, GameObject _p2, float _sCon, float _dCon)
     {
         P1 = _p1;
         P2 = _p2;
         springConstant = _sCon;
-        restLength = Vec3Distance(P1.transform.position, P2.transform.position);
+        restLength = Vector3.Distance(P1.transform.position, P2.transform.position);
         damperConstant = _dCon;
     }
 
@@ -64,7 +55,7 @@ public class Spring : MonoBehaviour
     public GameObject P1;   // Point 1
     public GameObject P2;   // Point 2
     [SerializeField]
-    public float springConstant;    // Spring Constant  // constant
+    public float springConstant;    // Spring           // constant
     [SerializeField]
     public float restLength;        // Rest Length      // constant
     [SerializeField]
