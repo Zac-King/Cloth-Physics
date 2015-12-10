@@ -4,11 +4,14 @@ using System.Collections.Generic;
 
 public class ClothPhysicTest : MonoBehaviour
 {
-    [ContextMenu("Spawn Nodes")]
     private void SpawnNodes()
     {
-        GameObject po = new GameObject("TheNodes");
-        po.transform.parent = gameObject.transform;
+        GameObject po = GameObject.Find("TheNodes");
+        if(po == null)
+        {
+            po = new GameObject("TheNodes");
+            po.transform.parent = gameObject.transform;
+        }
 
         Vector3 placement = Vector3.zero;
 
@@ -32,12 +35,15 @@ public class ClothPhysicTest : MonoBehaviour
         }
         //Debug.Log("Spawn Nodes");
     }
-
-    [ContextMenu("Attach Springs")]
+    
     private void AttachSprings()
     {
-        GameObject po = new GameObject("TheSprings");
-        po.transform.parent = gameObject.transform;
+        GameObject po = GameObject.Find("TheSprings");
+        if (po == null)
+        {
+            po = new GameObject("TheSprings");
+            po.transform.parent = gameObject.transform;
+        }
 
         for (int i = 0; i < clothNodes.Count ; i++)
         {
@@ -92,11 +98,14 @@ public class ClothPhysicTest : MonoBehaviour
         }
     }
 
-    [ContextMenu("Find Triangles")]
     private void MakeTriangles()
     {
-        GameObject po = new GameObject("TheTriangles");
-        po.transform.parent = gameObject.transform;
+        GameObject po = GameObject.Find("TheTriangles");
+        if (po == null)
+        {
+            po = new GameObject("TheTriangles");
+            po.transform.parent = gameObject.transform;
+        }
 
         for (int i = 0; i < clothNodes.Count; i++)
         {
@@ -136,6 +145,29 @@ public class ClothPhysicTest : MonoBehaviour
         }
     }
 
+    [ContextMenu("Create Cloth")]
+    public void CreateCloth()
+    {
+        foreach(GameObject n in clothNodes)
+        {
+            DestroyImmediate(n);
+        }
+        foreach (GameObject s in  clothSprings)
+        {
+            DestroyImmediate(s);
+        }
+        foreach (GameObject t in aeroTriangles)
+        {
+            DestroyImmediate(t);
+        }
+        clothNodes      = new List<GameObject>();
+        clothSprings    = new List<GameObject>();
+        aeroTriangles   = new List<GameObject>();
+
+        SpawnNodes();
+        AttachSprings();
+        MakeTriangles();
+    }
     void FixedUpdate()
     {
         foreach (GameObject s in clothSprings)  // Updating Springs

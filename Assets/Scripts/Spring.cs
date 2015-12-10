@@ -11,7 +11,7 @@ public class Spring : MonoBehaviour
         springConstant = _sCon;
         damperConstant = _dCon;
         restLength = Vector3.Distance(P1.transform.position, P2.transform.position);
-        breakLength = restLength * 2;
+        breakLength = restLength * 4;
     }
 
     public void DrawSpring()
