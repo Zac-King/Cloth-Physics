@@ -7,13 +7,16 @@ public class ClothPhysicTest : MonoBehaviour
     [ContextMenu("Spawn Nodes")]
     private void SpawnNodes()
     {
+        GameObject po = new GameObject("TheNodes");
+        po.transform.parent = gameObject.transform;
+
         Vector3 placement = Vector3.zero;
 
         for(int i = 1; i <= (clothWidth * clothHeight); i++)
         {
             GameObject go = Instantiate(clothNodePrefab);
 
-            go.transform.parent = NodesHeir.transform; // parenting it to the Game Object with this script
+            go.transform.parent = po.transform; // parenting it to the Game Object with this script
             go.transform.position = placement;          // Assigning 
             
             if ((i % clothWidth) == 0 )
@@ -33,7 +36,10 @@ public class ClothPhysicTest : MonoBehaviour
     [ContextMenu("Attach Springs")]
     private void AttachSprings()
     {
-        for(int i = 0; i < clothNodes.Count ; i++)
+        GameObject po = new GameObject("TheSprings");
+        po.transform.parent = gameObject.transform;
+
+        for (int i = 0; i < clothNodes.Count ; i++)
         {
             //check to see is the last node is on the same row as current // if true spring to left node
 
@@ -41,9 +47,9 @@ public class ClothPhysicTest : MonoBehaviour
             {
                 GameObject t = new GameObject("Spring");
                 t.AddComponent<Spring>();
-                t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - clothWidth], 10, -1);
+                t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - clothWidth], springCon, dampCon);
 
-                t.transform.parent = SpringsHeir.transform;
+                t.transform.parent = po.transform;
 
                 clothSprings.Add(t);
             }
@@ -54,9 +60,9 @@ public class ClothPhysicTest : MonoBehaviour
                 GameObject t = new GameObject("Spring");
 
                 t.AddComponent<Spring>();
-                t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - 1], 10, -1);
+                t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - 1], springCon, dampCon);
 
-                t.transform.parent = SpringsHeir.transform;
+                t.transform.parent = po.transform;
 
                 clothSprings.Add(t);
             }
@@ -66,9 +72,9 @@ public class ClothPhysicTest : MonoBehaviour
             {
                 GameObject t = new GameObject("Spring");
                 t.AddComponent<Spring>();
-                t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - clothWidth + 1], 10, -1);
+                t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - clothWidth + 1], springCon, dampCon);
 
-                t.transform.parent = SpringsHeir.transform;
+                t.transform.parent = po.transform;
 
                 clothSprings.Add(t);
             }
@@ -77,22 +83,77 @@ public class ClothPhysicTest : MonoBehaviour
             {
                 GameObject t = new GameObject("Spring");
                 t.AddComponent<Spring>();
-                t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - clothWidth - 1], 10, -1);
+                t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - clothWidth - 1], springCon, dampCon);
 
-                t.transform.parent = SpringsHeir.transform;
+                t.transform.parent = po.transform;
 
                 clothSprings.Add(t);
             }
         }
     }
 
+    [ContextMenu("Find Triangles")]
+    private void MakeTriangles()
+    {
+        GameObject po = new GameObject("TheTriangles");
+        po.transform.parent = gameObject.transform;
+
+        for (int i = 0; i < clothNodes.Count; i++)
+        {
+            // Not the Left most collumn    // Not top row
+            // Grab upper left triangle 
+            if((i % clothWidth != 0) && (i >= clothWidth))
+            {
+                GameObject at = new GameObject("Triangle");
+                at.AddComponent<ClothAeroTriangle>();
+                ClothAeroTriangle tt = at.GetComponent<ClothAeroTriangle>();
+
+                tt.nodeA = clothNodes[i];
+                tt.nodeB = clothNodes[i -1];
+                tt.nodeC = clothNodes[i - clothWidth];
+
+                at.transform.parent = po.transform;
+
+                aeroTriangles.Add(at);
+            }
+
+            // Not the Right most collumn   // Not bottom row
+            // Grab lower right triangle 
+            if ((i % clothWidth != clothWidth - 1) && (i < clothNodes.Count - clothWidth))
+            {
+                GameObject at = new GameObject("Triangle");
+                at.AddComponent<ClothAeroTriangle>();
+                ClothAeroTriangle tt = at.GetComponent<ClothAeroTriangle>();
+
+                tt.nodeA = clothNodes[i];
+                tt.nodeB = clothNodes[i + 1];
+                tt.nodeC = clothNodes[i + clothWidth];
+
+                at.transform.parent = po.transform;
+
+                aeroTriangles.Add(at);
+            }
+        }
+    }
+
     void FixedUpdate()
     {
-
         foreach (GameObject s in clothSprings)  // Updating Springs
         {
-            s.GetComponent<Spring>().UpdateSpring();
+            if (s == null)
+            {
+                clothSprings.Remove(s);
+                break;
+            }
+            else
+            {
+                Spring t = s.GetComponent<Spring>();    // temp 
+                t.springConstant = springCon;
+                t.damperConstant = dampCon;
+                t.UpdateSpring();
+            }
         }
+
         foreach (GameObject n in clothNodes) // Updating Nodes
         {
             n.GetComponent<ClothNode>().UpdateClothNode(gravityMod, windMod);
@@ -118,19 +179,15 @@ public class ClothPhysicTest : MonoBehaviour
     [SerializeField]
     private float windMod = 1;
 
+    // Spring Variables
     [SerializeField]
-    private GameObject NodesHeir;
+    private float springCon = 10;
     [SerializeField]
-    private GameObject SpringsHeir;
+    private float dampCon = -2;
 
     public List<GameObject> clothNodes;
     public List<GameObject> clothSprings;
     public List<GameObject> aeroTriangles;
 
-    struct Triangle
-    {
-        GameObject sideA;
-        GameObject sideB;
-        GameObject sideC;
-    }
+    
 }

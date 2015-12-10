@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class Spring : MonoBehaviour
 {
@@ -8,8 +9,9 @@ public class Spring : MonoBehaviour
         P1 = _p1;
         P2 = _p2;
         springConstant = _sCon;
-        restLength = Vector3.Distance(P1.transform.position, P2.transform.position);
         damperConstant = _dCon;
+        restLength = Vector3.Distance(P1.transform.position, P2.transform.position);
+        breakLength = restLength * 2;
     }
 
     public void DrawSpring()
@@ -46,18 +48,28 @@ public class Spring : MonoBehaviour
         p2node.force += p2force;
     }
 
+    public float d;
     public void UpdateSpring()
     {
         ComputeSpringForces();
         DrawSpring();
+        float dist = Vector3.Distance(P1.transform.position, P2.transform.position);
+
+        d = dist;
+        if (dist > breakLength)
+        {
+            Destroy(gameObject);
+        }
     }
 
     public GameObject P1;   // Point 1
     public GameObject P2;   // Point 2
     [SerializeField]
-    public float springConstant;    // Spring           // constant
+    public float breakLength;   
     [SerializeField]
     public float restLength;        // Rest Length      // constant
+    [SerializeField]
+    public float springConstant;    // Spring           // constant
     [SerializeField]
     public float damperConstant;    // Damper           // constant
 }

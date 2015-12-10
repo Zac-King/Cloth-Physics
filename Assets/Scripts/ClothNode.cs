@@ -10,7 +10,7 @@ public class ClothNode : MonoBehaviour
         if (!locked)
         {
             // force of Gravity            
-            force += (gravity * _gravMod);
+            force += (gravity * _gravMod) * mass;
             force += new Vector3(.2f, 0, 0) * _windMod;
             // F = ma   ||  a = f/m
             acceleration = force / mass;
@@ -28,5 +28,5 @@ public class ClothNode : MonoBehaviour
     public Vector3 acceleration  = Vector3.zero;
     public Vector3 velocity     = Vector3.zero;
     public Vector3 force        = Vector3.zero;
-    public Vector3 gravity      = new Vector3(0, -9, 0);
+    public Vector3 gravity      = new Vector3(0, -2, 0);
 }
