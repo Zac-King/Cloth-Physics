@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class Spring : MonoBehaviour
 {
+    
     public void MakeSpring(GameObject _p1, GameObject _p2, float _sCon, float _dCon)
     {
         P1 = _p1;
@@ -11,12 +12,16 @@ public class Spring : MonoBehaviour
         springConstant = _sCon;
         damperConstant = _dCon;
         restLength = Vector3.Distance(P1.transform.position, P2.transform.position);
-        breakLength = restLength * 4;
-    }
+        breakLength = restLength * 10;
 
-    public void DrawSpring()
-    {
-        Debug.DrawLine(P1.transform.position, P2.transform.position);
+        transform.position = P1.transform.position - P2.transform.position;
+
+        LineRenderer l = gameObject.AddComponent<LineRenderer>(); //add the line comp
+        l.SetColors(Color.white, Color.black);//do setup
+        l.SetWidth(0.02f, 0.02f);//setup
+        l.material = new Material(Shader.Find("Particles/Additive"));
+        DrawSpring(ref l);//draw it
+   
     }
 
     public void ComputeSpringForces()
@@ -52,18 +57,35 @@ public class Spring : MonoBehaviour
     public void UpdateSpring()
     {
         ComputeSpringForces();
-        DrawSpring();
+        
         float dist = Vector3.Distance(P1.transform.position, P2.transform.position);
-
-        d = dist;
+         
         if (dist > breakLength)
         {
             Destroy(gameObject);
         }
+
+        LineRenderer l = GetComponent<LineRenderer>();
+        DrawSpring(ref l);
+
+    }
+
+    /// <summary>
+    /// juste sets values of a line renderer
+    /// </summary>
+    /// <param name="l"></param>
+    void DrawSpring(ref LineRenderer l)
+    {           
+        l.SetPosition(0, P1.transform.position);
+        l.SetPosition(1, P2.transform.position);
+        // DrawSpring();
     }
 
     public GameObject P1;   // Point 1
     public GameObject P2;   // Point 2
+
+    //issue is with a class global getting overwritten
+
     [SerializeField]
     public float breakLength;   
     [SerializeField]

@@ -1,33 +1,45 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ClothAeroTriangle : MonoBehaviour
+[System.Serializable]
+public class ClothAeroTriangle
 {
-    public void UpdateTriangleValues()
+    public void ComputeTriangleForces(Vector3 air_Velocity, float density, float drag)
     {
-        ClothNode n1 = nodeA.GetComponent<ClothNode>();
-        ClothNode n2 = nodeB.GetComponent<ClothNode>();
-        ClothNode n3 = nodeC.GetComponent<ClothNode>();
+        ClothNode a = nodeA.GetComponent<ClothNode>();
+        ClothNode b = nodeB.GetComponent<ClothNode>();
+        ClothNode c = nodeC.GetComponent<ClothNode>();
 
-        averageVelocity = (n1.velocity + n2.velocity + n3.velocity) / 3;
+        Vector3 triangleVelocity = (a.velocity + b.velocity + c.velocity) / 3;
+        triangleVelocity -= air_Velocity;
 
-        Vector3 p1 = nodeA.transform.position;
-        Vector3 p2 = nodeB.transform.position;
-        Vector3 p3 = nodeC.transform.position;
+        Vector3 p1 = a.transform.position;
+        Vector3 p2 = b.transform.position;
+        Vector3 p3 = c.transform.position;
 
-        triangleNormal = Vector3.Cross((p2 - p1).normalized,(p3 - p1).normalized);
+        Vector3 r2r1crossr3r1 = Vector3.Cross((p1 - p2), (p3 - p2));
+        Vector3 normal = r2r1crossr3r1 / r2r1crossr3r1.magnitude;
 
-        area = ((p1-p2).magnitude * (p1-p3).magnitude) / 2;
+        //            ((0.5f * Vector3.Dot(triangle_velocity, normal) * triangle_velocity.magnitude) / r2r1crossr3r1.magnitude)
+        float area = (0.5f * Vector3.Dot(triangleVelocity, normal) * triangleVelocity.magnitude) / r2r1crossr3r1.magnitude;
+        
+        //float effectiveArea = area * Vector3.Dot(triangleVelocity, normal) / triangleVelocity.magnitude;
+
+        Vector3 forceAero = -0.5f * drag * density * area * r2r1crossr3r1;
+        forceAero /= 3.0f;
+
+        WindForce = forceAero;
+        a.force += forceAero ;
+        b.force += forceAero ;
+        c.force += forceAero ;
     }
-
-
-
+    public Vector3 WindForce;
+    
+    [SerializeField]
     public GameObject nodeA;
+    [SerializeField]
     public GameObject nodeB;
+    [SerializeField]
     public GameObject nodeC;
-
-    private Vector3 averageVelocity = Vector3.zero;
-    private Vector3 triangleNormal = Vector3.zero;
-    private float area = 0;
-
+ 
 }

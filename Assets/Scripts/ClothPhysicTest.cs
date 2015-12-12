@@ -33,7 +33,6 @@ public class ClothPhysicTest : MonoBehaviour
             }
             clothNodes.Add(go);
         }
-        //Debug.Log("Spawn Nodes");
     }
     
     private void AttachSprings()
@@ -100,47 +99,32 @@ public class ClothPhysicTest : MonoBehaviour
 
     private void MakeTriangles()
     {
-        GameObject po = GameObject.Find("TheTriangles");
-        if (po == null)
-        {
-            po = new GameObject("TheTriangles");
-            po.transform.parent = gameObject.transform;
-        }
-
         for (int i = 0; i < clothNodes.Count; i++)
         {
             // Not the Left most collumn    // Not top row
             // Grab upper left triangle 
             if((i % clothWidth != 0) && (i >= clothWidth))
             {
-                GameObject at = new GameObject("Triangle");
-                at.AddComponent<ClothAeroTriangle>();
-                ClothAeroTriangle tt = at.GetComponent<ClothAeroTriangle>();
+                ClothAeroTriangle tt = new ClothAeroTriangle();
 
                 tt.nodeA = clothNodes[i];
                 tt.nodeB = clothNodes[i -1];
                 tt.nodeC = clothNodes[i - clothWidth];
 
-                at.transform.parent = po.transform;
-
-                aeroTriangles.Add(at);
+                aeroTriangles.Add(tt);
             }
 
             // Not the Right most collumn   // Not bottom row
             // Grab lower right triangle 
             if ((i % clothWidth != clothWidth - 1) && (i < clothNodes.Count - clothWidth))
             {
-                GameObject at = new GameObject("Triangle");
-                at.AddComponent<ClothAeroTriangle>();
-                ClothAeroTriangle tt = at.GetComponent<ClothAeroTriangle>();
+                ClothAeroTriangle tt = new ClothAeroTriangle();
 
                 tt.nodeA = clothNodes[i];
                 tt.nodeB = clothNodes[i + 1];
                 tt.nodeC = clothNodes[i + clothWidth];
-
-                at.transform.parent = po.transform;
-
-                aeroTriangles.Add(at);
+                
+                aeroTriangles.Add(tt);
             }
         }
     }
@@ -156,18 +140,62 @@ public class ClothPhysicTest : MonoBehaviour
         {
             DestroyImmediate(s);
         }
-        foreach (GameObject t in aeroTriangles)
-        {
-            DestroyImmediate(t);
-        }
         clothNodes      = new List<GameObject>();
         clothSprings    = new List<GameObject>();
-        aeroTriangles   = new List<GameObject>();
+        aeroTriangles   = new List<ClothAeroTriangle>();
 
         SpawnNodes();
         AttachSprings();
         MakeTriangles();
+
+        // lock corners
+        //clothNodes[0].GetComponent<ClothNode>().locked = true;
+        //clothNodes[clothWidth - 1].GetComponent<ClothNode>().locked = true;
+        //clothNodes[clothWidth / 2 - 1].GetComponent<ClothNode>().locked = true;
+        for(int i =0; i < clothNodes.Count; i++)
+        {
+            if((i < clothWidth) || (i > clothNodes.Count - (clothWidth - 1)))
+            {
+                clothNodes[i].GetComponent<ClothNode>().locked = true;
+            }
+            if((i % clothWidth == 0) || (i % clothWidth == clothWidth - 1))
+            {
+                clothNodes[i].GetComponent<ClothNode>().locked = true;
+            }
+        }
+
     }
+
+    public void SetGravityMod(float g)
+    {
+        gravityMod = g;
+    }
+
+    public void SetDampenCon(float d)
+    {
+        dampCon = d;
+    }
+
+    public void SetSpringCon(float s)
+    {
+        springCon = s;
+    }
+
+    public void SetWind_x(float w)
+    {
+        wind.x = w;
+    }
+
+    public void SetWind_y(float w)
+    {
+        wind.y = w;
+    }
+
+    public void SetWind_z(float w)
+    {
+        wind.z = w;
+    }
+
     void FixedUpdate()
     {
         foreach (GameObject s in clothSprings)  // Updating Springs
@@ -183,18 +211,19 @@ public class ClothPhysicTest : MonoBehaviour
                 t.springConstant = springCon;
                 t.damperConstant = dampCon;
                 t.UpdateSpring();
+
             }
         }
 
         foreach (GameObject n in clothNodes) // Updating Nodes
         {
-            n.GetComponent<ClothNode>().UpdateClothNode(gravityMod, windMod);
+            n.GetComponent<ClothNode>().UpdateClothNode(gravityMod);
         }
-    }
 
-    public void SetGravityMod(float g)
-    {
-        gravityMod = g;
+        foreach (ClothAeroTriangle t in aeroTriangles)
+        {
+            t.ComputeTriangleForces(wind, density, drag);
+        }
     }
 
     [SerializeField]
@@ -208,8 +237,8 @@ public class ClothPhysicTest : MonoBehaviour
 
     [SerializeField]
     private float gravityMod = 1;
-    [SerializeField]
-    private float windMod = 1;
+
+    public Vector3 wind = new Vector3(0,0,0);
 
     // Spring Variables
     [SerializeField]
@@ -219,7 +248,8 @@ public class ClothPhysicTest : MonoBehaviour
 
     public List<GameObject> clothNodes;
     public List<GameObject> clothSprings;
-    public List<GameObject> aeroTriangles;
-
+    public List<ClothAeroTriangle> aeroTriangles;
+    public float density, drag;
+    private GameObject grabNode = new GameObject();
     
 }
