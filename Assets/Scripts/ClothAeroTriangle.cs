@@ -20,20 +20,16 @@ public class ClothAeroTriangle
         Vector3 r2r1crossr3r1 = Vector3.Cross((p1 - p2), (p3 - p2));
         Vector3 normal = r2r1crossr3r1 / r2r1crossr3r1.magnitude;
 
-        //            ((0.5f * Vector3.Dot(triangle_velocity, normal) * triangle_velocity.magnitude) / r2r1crossr3r1.magnitude)
         float area = (0.5f * Vector3.Dot(triangleVelocity, normal) * triangleVelocity.magnitude) / r2r1crossr3r1.magnitude;
-        
         //float effectiveArea = area * Vector3.Dot(triangleVelocity, normal) / triangleVelocity.magnitude;
 
         Vector3 forceAero = -0.5f * drag * density * area * r2r1crossr3r1;
         forceAero /= 3.0f;
 
-        WindForce = forceAero;
         a.force += forceAero ;
         b.force += forceAero ;
         c.force += forceAero ;
     }
-    public Vector3 WindForce;
     
     [SerializeField]
     public GameObject nodeA;

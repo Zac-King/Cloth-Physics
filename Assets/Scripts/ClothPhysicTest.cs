@@ -246,10 +246,12 @@ public class ClothPhysicTest : MonoBehaviour
     [SerializeField]
     private float dampCon = -2;
 
+    public float density, drag;
+
     public List<GameObject> clothNodes;
     public List<GameObject> clothSprings;
     public List<ClothAeroTriangle> aeroTriangles;
-    public float density, drag;
-    private GameObject grabNode = new GameObject();
+    
+    //private GameObject grabNode = new GameObject();
     
 }
