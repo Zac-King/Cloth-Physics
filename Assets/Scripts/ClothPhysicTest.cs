@@ -165,6 +165,8 @@ public class ClothPhysicTest : MonoBehaviour
         }
 
     }
+  
+    //////////////////////////////////////
 
     public void SetGravityMod(float g)
     {
@@ -195,6 +197,19 @@ public class ClothPhysicTest : MonoBehaviour
     {
         wind.z = w;
     }
+
+    
+    public void SetClothWidth(UnityEngine.UI.Slider slider)
+    {
+        clothWidth = (int)slider.value;
+    }
+
+    public void SetClothHeight(int h)
+    {
+        clothHeight = h;
+    }
+
+    //////////////////////////////////////
 
     void FixedUpdate()
     {
