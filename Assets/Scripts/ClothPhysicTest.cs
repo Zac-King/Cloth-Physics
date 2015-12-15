@@ -149,20 +149,20 @@ public class ClothPhysicTest : MonoBehaviour
         MakeTriangles();
 
         // lock corners
-        clothNodes[0].GetComponent<ClothNode>().locked = true;
-        clothNodes[clothWidth - 1].GetComponent<ClothNode>().locked = true;
-        clothNodes[clothWidth / 2 - 1].GetComponent<ClothNode>().locked = true;
-        //for(int i =0; i < clothNodes.Count; i++)
-        //{
-        //    if((i < clothWidth) || (i > clothNodes.Count - (clothWidth - 1)))
-        //    {
-        //        clothNodes[i].GetComponent<ClothNode>().locked = true;
-        //    }
-        //    if((i % clothWidth == 0) || (i % clothWidth == clothWidth - 1))
-        //    {
-        //        clothNodes[i].GetComponent<ClothNode>().locked = true;
-        //    }
-        //}
+        //clothNodes[0].GetComponent<ClothNode>().locked = true;
+        //clothNodes[clothWidth - 1].GetComponent<ClothNode>().locked = true;
+        //clothNodes[clothWidth / 2 - 1].GetComponent<ClothNode>().locked = true;
+        for (int i = 0; i < clothNodes.Count; i++)
+        {
+            if ((i < clothWidth) || (i > clothNodes.Count - (clothWidth - 1)))
+            {
+                clothNodes[i].GetComponent<ClothNode>().locked = true;
+            }
+            if ((i % clothWidth == 0) || (i % clothWidth == clothWidth - 1))
+            {
+                clothNodes[i].GetComponent<ClothNode>().locked = true;
+            }
+        }
 
     }
   
@@ -309,10 +309,4 @@ public class ClothPhysicTest : MonoBehaviour
     public List<GameObject> clothNodes;
     public List<GameObject> clothSprings;
     public List<ClothAeroTriangle> aeroTriangles;
-
-    [SerializeField]
-    private GameObject WreckingBall;
-    [SerializeField]
-    private List<GameObject> Grabbed = new List<GameObject>();
-
 }
