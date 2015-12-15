@@ -70,9 +70,7 @@ public class Spring : MonoBehaviour
 
     }
 
-    /// <summary>
     /// juste sets values of a line renderer
-    /// </summary>
     /// <param name="l"></param>
     void DrawSpring(ref LineRenderer l)
     {           

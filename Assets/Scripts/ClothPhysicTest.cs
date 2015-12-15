@@ -20,7 +20,7 @@ public class ClothPhysicTest : MonoBehaviour
             GameObject go = Instantiate(clothNodePrefab);
 
             go.transform.parent = po.transform; // parenting it to the Game Object with this script
-            go.transform.position = placement;          // Assigning 
+            go.transform.localPosition = placement;          // Assigning 
             
             if ((i % clothWidth) == 0 )
             {
@@ -149,70 +149,106 @@ public class ClothPhysicTest : MonoBehaviour
         MakeTriangles();
 
         // lock corners
-        //clothNodes[0].GetComponent<ClothNode>().locked = true;
-        //clothNodes[clothWidth - 1].GetComponent<ClothNode>().locked = true;
-        //clothNodes[clothWidth / 2 - 1].GetComponent<ClothNode>().locked = true;
-        for(int i =0; i < clothNodes.Count; i++)
-        {
-            if((i < clothWidth) || (i > clothNodes.Count - (clothWidth - 1)))
-            {
-                clothNodes[i].GetComponent<ClothNode>().locked = true;
-            }
-            if((i % clothWidth == 0) || (i % clothWidth == clothWidth - 1))
-            {
-                clothNodes[i].GetComponent<ClothNode>().locked = true;
-            }
-        }
+        clothNodes[0].GetComponent<ClothNode>().locked = true;
+        clothNodes[clothWidth - 1].GetComponent<ClothNode>().locked = true;
+        clothNodes[clothWidth / 2 - 1].GetComponent<ClothNode>().locked = true;
+        //for(int i =0; i < clothNodes.Count; i++)
+        //{
+        //    if((i < clothWidth) || (i > clothNodes.Count - (clothWidth - 1)))
+        //    {
+        //        clothNodes[i].GetComponent<ClothNode>().locked = true;
+        //    }
+        //    if((i % clothWidth == 0) || (i % clothWidth == clothWidth - 1))
+        //    {
+        //        clothNodes[i].GetComponent<ClothNode>().locked = true;
+        //    }
+        //}
 
     }
   
-    //////////////////////////////////////
+    // Slider Functions  /////////////////
 
-    public void SetGravityMod(float g)
+    public void SetGravityMod(UnityEngine.UI.Slider slider)
     {
-        gravityMod = g;
+        gravityMod = (float)slider.value;
     }
 
-    public void SetDampenCon(float d)
+    public void SetDampenCon(UnityEngine.UI.Slider slider)
     {
-        dampCon = d;
+        dampCon = (float)slider.value;
     }
 
-    public void SetSpringCon(float s)
+    public void SetSpringCon(UnityEngine.UI.Slider slider)
     {
-        springCon = s;
+        springCon = (float)slider.value;
     }
 
-    public void SetWind_x(float w)
+    public void SetWind_x(UnityEngine.UI.Slider slider)
     {
-        wind.x = w;
+        wind.x = (float)slider.value;
     }
 
-    public void SetWind_y(float w)
+    public void SetWind_y(UnityEngine.UI.Slider slider)
     {
-        wind.y = w;
+        wind.y = (float)slider.value;
     }
 
-    public void SetWind_z(float w)
+    public void SetWind_z(UnityEngine.UI.Slider slider)
     {
-        wind.z = w;
+        wind.z = (float)slider.value;
     }
 
-    
     public void SetClothWidth(UnityEngine.UI.Slider slider)
     {
         clothWidth = (int)slider.value;
     }
 
-    public void SetClothHeight(int h)
+    public void SetClothHeight(UnityEngine.UI.Slider slider)
     {
-        clothHeight = h;
+        clothHeight = (int)slider.value;
     }
 
     //////////////////////////////////////
 
+    private GameObject collideObj;
+    private RaycastHit rayHit;
+    private float distance;
+    private Vector3 objPos;
+    public void UpdateMouse()
+    {
+        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        var hit = Physics.Raycast(ray.origin, ray.direction, out rayHit);
+
+        if (Input.GetKey(KeyCode.Mouse0))
+        {
+            if (hit)
+            {
+                collideObj = rayHit.collider.gameObject;
+                distance = rayHit.distance;
+            }
+            objPos = ray.origin + distance * ray.direction;
+            collideObj.transform.position = new Vector3(objPos.x, objPos.y, collideObj.transform.position.z);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Mouse1))
+        {
+            collideObj.GetComponent<ClothNode>().ToggleLock();
+        }
+        if (Input.GetKeyUp(KeyCode.Mouse0))
+        {
+            collideObj = null;
+        }
+        //collideObj = new GameObject();
+    }
+
+
+    //////////////////////////////////////
+        
+
     void FixedUpdate()
     {
+        UpdateMouse();
+
         foreach (GameObject s in clothSprings)  // Updating Springs
         {
             if (s == null)
@@ -238,6 +274,11 @@ public class ClothPhysicTest : MonoBehaviour
         foreach (ClothAeroTriangle t in aeroTriangles)
         {
             t.ComputeTriangleForces(wind, density, drag);
+
+            if ((Vector3.Distance(t.nodeA.transform.position, t.nodeB.transform.position) > 10) || (Vector3.Distance(t.nodeA.transform.position, t.nodeC.transform.position) > 10) || (Vector3.Distance(t.nodeB.transform.position, t.nodeC.transform.position) > 10))
+            {
+                aeroTriangles.Remove(t);
+            }
         }
     }
 
@@ -261,12 +302,17 @@ public class ClothPhysicTest : MonoBehaviour
     [SerializeField]
     private float dampCon = -2;
 
-    public float density, drag;
+    public float density;
+    public float drag;
+
 
     public List<GameObject> clothNodes;
     public List<GameObject> clothSprings;
     public List<ClothAeroTriangle> aeroTriangles;
-    
-    //private GameObject grabNode = new GameObject();
-    
+
+    [SerializeField]
+    private GameObject WreckingBall;
+    [SerializeField]
+    private List<GameObject> Grabbed = new List<GameObject>();
+
 }

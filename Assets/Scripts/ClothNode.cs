@@ -4,39 +4,6 @@ using System.Collections.Generic;
 
 public class ClothNode : MonoBehaviour
 {
-    void OnMouseOver()
-    {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
-        {
-            Vector3 mp = new Vector3(); 
-            locked = true;
-            if (Input.GetMouseButtonDown(0))
-            {
-                mp.x = Input.mousePosition.x;
-                mp.y = Input.mousePosition.y;
-                transform.position -= mp * Time.deltaTime * .2f;
-                altered = true;
-            }
-        }
-    }
-
-    void OnMouseExit()
-    {
-        
-        if (altered == true)
-        {
-            if(locked == false)
-            {
-                locked = true;
-            }
-            else
-            {
-                locked = false;
-            }
-            altered = false;
-        }
-    }
-
     // What does it mean to be a cloth node?
     public void UpdateClothNode(float _gravMod)
     {
@@ -53,6 +20,19 @@ public class ClothNode : MonoBehaviour
         }
         force = Vector3.zero;
         //accleration = Vector3.zero;
+    }
+    
+    public void ToggleLock()
+    {
+        if(locked)
+        {
+            locked = false;
+        }
+
+        else
+        {
+            locked = true;
+        }
     }
     // needs revision
     public bool locked  = false;
