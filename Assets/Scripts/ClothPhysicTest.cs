@@ -149,20 +149,20 @@ public class ClothPhysicTest : MonoBehaviour
         MakeTriangles();
 
         // lock corners
-        //clothNodes[0].GetComponent<ClothNode>().locked = true;
-        //clothNodes[clothWidth - 1].GetComponent<ClothNode>().locked = true;
-        //clothNodes[clothWidth / 2 - 1].GetComponent<ClothNode>().locked = true;
-        for (int i = 0; i < clothNodes.Count; i++)
-        {
-            if ((i < clothWidth) || (i > clothNodes.Count - (clothWidth - 1)))
-            {
-                clothNodes[i].GetComponent<ClothNode>().locked = true;
-            }
-            if ((i % clothWidth == 0) || (i % clothWidth == clothWidth - 1))
-            {
-                clothNodes[i].GetComponent<ClothNode>().locked = true;
-            }
-        }
+        clothNodes[0].GetComponent<ClothNode>().locked = true;
+        clothNodes[clothWidth - 1].GetComponent<ClothNode>().locked = true;
+        clothNodes[clothWidth / 2 - 1].GetComponent<ClothNode>().locked = true;
+        //for (int i = 0; i < clothNodes.Count; i++)
+        //{
+        //    if ((i < clothWidth) || (i > clothNodes.Count - (clothWidth - 1)))
+        //    {
+        //        clothNodes[i].GetComponent<ClothNode>().locked = true;
+        //    }
+        //    if ((i % clothWidth == 0) || (i % clothWidth == clothWidth - 1))
+        //    {
+        //        clothNodes[i].GetComponent<ClothNode>().locked = true;
+        //    }
+        //}
 
     }
   
@@ -268,7 +268,7 @@ public class ClothPhysicTest : MonoBehaviour
 
         foreach (GameObject n in clothNodes) // Updating Nodes
         {
-            n.GetComponent<ClothNode>().UpdateClothNode(gravityMod);
+            n.GetComponent<ClothNode>().UpdateClothNode(gravityMod, floor);
         }
 
         foreach (ClothAeroTriangle t in aeroTriangles)
@@ -305,6 +305,7 @@ public class ClothPhysicTest : MonoBehaviour
     public float density;
     public float drag;
 
+    public GameObject floor = new GameObject();
 
     public List<GameObject> clothNodes;
     public List<GameObject> clothSprings;

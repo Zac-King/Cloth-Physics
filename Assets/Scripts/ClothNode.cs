@@ -5,8 +5,13 @@ using System.Collections.Generic;
 public class ClothNode : MonoBehaviour
 {
     // What does it mean to be a cloth node?
-    public void UpdateClothNode(float _gravMod)
+    public void UpdateClothNode(float _gravMod, GameObject a)
     {
+        if(gameObject.transform.position.y < a.transform.position.y + .02f)
+        {
+            _gravMod = 0;
+        }
+
         if (!locked)
         {
             // force of Gravity            
