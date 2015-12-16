@@ -37,5 +37,4 @@ public class ClothAeroTriangle
     public GameObject nodeB;
     [SerializeField]
     public GameObject nodeC;
- 
 }

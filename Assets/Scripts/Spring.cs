@@ -53,7 +53,6 @@ public class Spring : MonoBehaviour
         p2node.force += p2force;
     }
 
-    public float d;
     public void UpdateSpring()
     {
         ComputeSpringForces();
@@ -76,16 +75,13 @@ public class Spring : MonoBehaviour
     {           
         l.SetPosition(0, P1.transform.position);
         l.SetPosition(1, P2.transform.position);
-        // DrawSpring();
     }
 
     public GameObject P1;   // Point 1
     public GameObject P2;   // Point 2
 
-    //issue is with a class global getting overwritten
-
     [SerializeField]
-    public float breakLength;   
+    public float breakLength;       // Break Length     
     [SerializeField]
     public float restLength;        // Rest Length      // constant
     [SerializeField]

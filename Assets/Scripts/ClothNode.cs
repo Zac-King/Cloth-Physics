@@ -19,7 +19,6 @@ public class ClothNode : MonoBehaviour
             transform.position += velocity;
         }
         force = Vector3.zero;
-        //accleration = Vector3.zero;
     }
     
     public void ToggleLock()
@@ -36,16 +35,9 @@ public class ClothNode : MonoBehaviour
     }
     // needs revision
     public bool locked  = false;
-    private bool altered = false;
-
     public float mass   = 1;
-    private float nodeCollisonRadius;
     public Vector3 acceleration  = Vector3.zero;
     public Vector3 velocity     = Vector3.zero;
     public Vector3 force        = Vector3.zero;
     public Vector3 gravity      = new Vector3(0, -2, 0);
-    [SerializeField]
-    private Material selectedColor;
-    [SerializeField]
-    private Material defaultColor;
 }
