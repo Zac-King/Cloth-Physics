@@ -18,7 +18,709 @@
     </div>
     <p class="footer">&laquo; created with <a href="http://unity3d.com/" title="Go to unity3d.com">Unity</a> &raquo;</p>
 	<p>
-	"asdafgh"
+	"Cloth Physics"
+	"I.0: Requirements Documentation
+
+I.1: Description of the problem
+Name: Cloth physics simulation
+Problem Statement: Implement a system that simulates cloth like behavior when forces are applied to it by use of springs.
+
+I.2: Input Information
+Name: Gravity Mod - Slider
+Description: Slider bar located in the lower left corner of the user display, makes use of the SetGravityMod() function located in the ClothPhysicsTest.cs. Allowing the user to edit the Gravity at runtime.
+
+Name: Spring
+Description: Slider bar that changes the springCon of all the springs in clothSprings
+
+Name: Dampen
+Description: Slider bar that changes the springDamp of all the springs in clothSprings
+
+Name: Width
+Description: Slider, Controls the desired cloth width 
+
+Name: Height
+Description: Slider, Controls the desired cloth height
+
+Name: Reset Cloth
+Description: Button that destroys the old cloth and spawns a new one
+
+I.3: Output Information
+Visual display of a cloth like behavior applied to a grid of particles.
+
+I.4: User Interface Information
+Sliders
+Use to change values at run time
+
+Mouse controls
+Left click and drag to move the clicked node. While left clicking right click to lock or unlock node.
+
+II.0: Design Documentation
+
+II.1 System Architecture Description
+The application makes use of 3 scripts controlling the force calculations. ClothNode.cs contains the particle information, as well as the UpdateClothNode() Function to apply the changes to information. The Spring.cs contains all the sping information as well as the 2 particles the spring is attached to. Both of which are called in the ClothPhysicsTest.cs which manages all the clothNodes, as well as all the clothSprings. 
+
+II.2: Information about the functions
+
+File: ClothNode.cs
+Class: ClothNode
+
+Data Members:
+
+Name: locked
+Type: bool	- public
+Description: Value to determine whether or not node will act as a cloth Anchor, and be unmoved by other forces.
+
+Name: mass
+Type: float	- public
+Description:  Particle mass, in use in Force calculations (Force = mass * acceleration)
+
+Name: acceleration
+Type: Vector3	- public
+Description: 
+
+Name: velocity
+Type: Vector3	- public
+Description: Applied to the node position 
+
+Name: force
+Type: Vector3	- public
+Description: sum of combined forces 
+
+Name: gravity
+Type: Vector3	- public
+Description: downward force to be applied to the force variable. Used to simulate real world gravitation force. ( 0, -9. 0 )
+
+Function: UpdateClothNode
+Parameters: float _gravMod
+Description: Apply motion to node’s position if !locked
+Return: void
+
+Function: ToggleLock
+Parameters: self
+Description: Invert the locked boolean based on current value
+Return: void
+
+File: Spring.cs
+
+Name: P1
+Type: GameObject 	- public
+Description: stored reference to node connected node, spring is the connection between P1 and P2
+
+Name: P2
+Type: GameObject	- public
+Description: stored reference to node connected node, spring is the connection between P1 and P2
+
+Name: springConstant
+Type: float	- public
+Description: How stiff the spring pulls and pushes away/towards
+
+Name: breakLength
+Type: float	- public
+Description: Distance in which the spring destroys itself
+
+Name: restLength
+Type: float	- public
+Description: Distance between the P1 and P2 nodes the spring is trying to reach
+
+Name: damperConstant
+Type: float 	- public
+Description: how much each node react to other neighboring nodes
+
+Function: MakeSpring
+Parameters: GameObject _p1, GameObject _p2, float _sCon, float _dCon
+Description: Assigns the initial values of a spring
+Return: void
+
+Function: DrawSpring
+Parameters: self
+Description: draw a line between P1 and P2
+Return: void
+
+Function: ComputeSpringForces
+Parameters: self
+Description: calculates spring forces
+Return: void
+
+Function: UpdateSpring
+Parameters: self
+Description: calls both ComputSpringForce() and DrawSpring() for ease of use when updating
+Return: void
+
+File: ClothPhysicsTest.cs
+
+Name: clothWidth
+Type: int 	- private - serialized 
+Description: for node spawn width. How many nodes wide
+
+Name: clothHeight
+Type: int 	- private - serialized 
+Description: for node spawn width. How many nodes height
+
+Name: initSpacing
+Type: float 	- private - serialized 
+Description: for node spawn spacing.
+
+Name: clothNodePrefab
+Type: GameObject	- private - serialized 
+Description: reference to node prefab
+
+Name: gravityMod
+Type: float	- private - serialized
+Description: Modify gravitational force at runtime. passed into UpdateClothNode(GravityMod)
+
+Name: clothNodes
+Type: List<GameObjects>	- public
+Description: Stored reference to all the clothNodes
+
+Name: clothSprings
+Type: List<GameObjects>	- public
+Description: Stored reference to all the clothSprings
+
+Function: SpawnNodes
+Parameters: self
+Description: Instantiates the nodes based on member variables
+Return: void
+
+Function: SpawnSprings
+Parameters: self
+Description:  Instantiates the springs based on existing nodes in clothNodes
+Return: void
+
+Function: FixedUpdate
+Parameters: self
+Description: Updates each node and sping in clothNodes and clothSprings
+Return: void
+
+Function: SetGravityMod
+Parameters: float g
+Description: assigns gravityMod to the value of g. For use of Gravity Mod Slider
+Return: void
+
+File: ClothAeroTriangle.cs
+
+Name: nodeA
+Type: GameObject	- public
+Description: Reference to a one corner triangle
+
+Name: nodeB
+Type: GameObject	- public
+Description: Reference to a one corner triangle
+
+Name: nodeC
+Type: GameObject	- public
+Description: Reference to a one corner triangle
+
+Function: ComputeTriangleForces
+Parameters: Vector3 air_Velocity, float density, float drag
+Description: 
+Return: void
+
+
+III.0: Implementation Documentation
+
+III.1: Program Code
+
+File: ClothNode.cs
+
+using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+
+public class ClothNode : MonoBehaviour
+{
+    // What does it mean to be a cloth node?
+    public void UpdateClothNode(float _gravMod)
+    {
+        if (!locked)
+        {
+            // force of Gravity            
+            force += (gravity * _gravMod) * mass;
+            // F = ma   ||  a = f/m
+            acceleration = force / mass;
+
+            velocity = acceleration * Time.fixedDeltaTime;
+            
+            transform.position += velocity;
+        }
+        force = Vector3.zero;
+    }
+    
+    public void ToggleLock()
+    {
+        if(locked)
+        {
+            locked = false;
+        }
+
+        else
+        {
+            locked = true;
+        }
+    }
+    // needs revision
+    public bool locked  = false;
+    public float mass   = 1;
+    public Vector3 acceleration  = Vector3.zero;
+    public Vector3 velocity     = Vector3.zero;
+    public Vector3 force        = Vector3.zero;
+    public Vector3 gravity      = new Vector3(0, -2, 0);
+}
+
+
+File: Spring.cs
+
+using UnityEngine;
+using System.Collections;
+using UnityEngine.UI;
+
+public class Spring : MonoBehaviour
+{
+    
+    public void MakeSpring(GameObject _p1, GameObject _p2, float _sCon, float _dCon)
+    {
+        P1 = _p1;
+        P2 = _p2;
+        springConstant = _sCon;
+        damperConstant = _dCon;
+        restLength = Vector3.Distance(P1.transform.position, P2.transform.position);
+        breakLength = restLength * 10;
+
+        transform.position = P1.transform.position - P2.transform.position;
+
+        LineRenderer l = gameObject.AddComponent<LineRenderer>(); //add the line comp
+        l.SetColors(Color.white, Color.black);//do setup
+        l.SetWidth(0.02f, 0.02f);//setup
+        l.material = new Material(Shader.Find("Particles/Additive"));
+        DrawSpring(ref l);//draw it
+   
+    }
+
+    public void ComputeSpringForces()
+    {
+        ClothNode p1node = P1.GetComponent<ClothNode>();
+        ClothNode p2node = P2.GetComponent<ClothNode>();
+        Vector3 displacement    = P2.transform.position - P1.transform.position;
+        float   distance        = displacement.magnitude;
+        Vector3 direction       = displacement / distance;
+
+        // 1 Dimension velocities b/c a spring exists in 1 Dimension      // Used in Dampen Force formula
+        float node1Velocity = Vector3.Dot( displacement.normalized, p1node.velocity );
+        float node2Velocity = Vector3.Dot( displacement.normalized, p2node.velocity );
+
+        // Spring Force = -spring factor * (distance - rest length)
+        float Fspring = -springConstant * ( distance - restLength );
+        // Dampen Force = -Dampen Factor * (difference of velocity)
+        float Fdampen = -damperConstant * ( node2Velocity - node1Velocity );
+
+        // 1 Dimension Spring Dampen Force  // Sum of Spring Force and Dampen Force
+        float SpringDampenforce = Fspring + Fdampen;
+
+        // Converting it back into a 3 Dimensional force
+        Vector3 p2force = SpringDampenforce * direction;
+        Vector3 p1force = -p2force;
+
+        // Applying it to nodes
+        p1node.force += p1force;
+        p2node.force += p2force;
+    }
+
+    public void UpdateSpring()
+    {
+        ComputeSpringForces();
+        
+        float dist = Vector3.Distance(P1.transform.position, P2.transform.position);
+         
+        if (dist > breakLength)
+        {
+            Destroy(gameObject);
+        }
+
+        LineRenderer l = GetComponent<LineRenderer>();
+        DrawSpring(ref l);
+
+    }
+
+    /// juste sets values of a line renderer
+    /// <param name="l"></param>
+    void DrawSpring(ref LineRenderer l)
+    {           
+        l.SetPosition(0, P1.transform.position);
+        l.SetPosition(1, P2.transform.position);
+    }
+
+    public GameObject P1;   // Point 1
+    public GameObject P2;   // Point 2
+
+    [SerializeField]
+    public float breakLength;       // Break Length     
+    [SerializeField]
+    public float restLength;        // Rest Length      // constant
+    [SerializeField]
+    public float springConstant;    // Spring           // constant
+    [SerializeField]
+    public float damperConstant;    // Damper           // constant
+}
+
+File: ClothAeroTriangle.cs
+
+using UnityEngine;
+using System.Collections;
+
+[System.Serializable]
+public class ClothAeroTriangle
+{
+    public void ComputeTriangleForces(Vector3 air_Velocity, float density, float drag)
+    {
+        ClothNode a = nodeA.GetComponent<ClothNode>();
+        ClothNode b = nodeB.GetComponent<ClothNode>();
+        ClothNode c = nodeC.GetComponent<ClothNode>();
+
+        Vector3 triangleVelocity = (a.velocity + b.velocity + c.velocity) / 3;
+        triangleVelocity -= air_Velocity;
+
+        Vector3 p1 = a.transform.position;
+        Vector3 p2 = b.transform.position;
+        Vector3 p3 = c.transform.position;
+
+        Vector3 r2r1crossr3r1 = Vector3.Cross((p1 - p2), (p3 - p2));
+        Vector3 normal = r2r1crossr3r1 / r2r1crossr3r1.magnitude;
+
+        float area = (0.5f * Vector3.Dot(triangleVelocity, normal) * triangleVelocity.magnitude) / r2r1crossr3r1.magnitude;
+        //float effectiveArea = area * Vector3.Dot(triangleVelocity, normal) / triangleVelocity.magnitude;
+
+        Vector3 forceAero = -0.5f * drag * density * area * r2r1crossr3r1;
+        forceAero /= 3.0f;
+
+        a.force += forceAero ;
+        b.force += forceAero ;
+        c.force += forceAero ;
+    }
+    
+    [SerializeField]
+    public GameObject nodeA;
+    [SerializeField]
+    public GameObject nodeB;
+    [SerializeField]
+    public GameObject nodeC;
+}
+
+
+
+File: ClothPhysicTest.cs
+
+using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+
+public class ClothPhysicTest : MonoBehaviour
+{
+    private void SpawnNodes()
+    {
+        GameObject po = GameObject.Find("TheNodes");
+        if(po == null)
+        {
+            po = new GameObject("TheNodes");
+            po.transform.parent = gameObject.transform;
+        }
+
+        Vector3 placement = Vector3.zero;
+
+        for(int i = 1; i <= (clothWidth * clothHeight); i++)
+        {
+            GameObject go = Instantiate(clothNodePrefab);
+
+            go.transform.parent = po.transform; // parenting it to the Game Object with this script
+            go.transform.localPosition = placement;          // Assigning 
+            
+            if ((i % clothWidth) == 0 )
+            {
+                placement.x = 0;
+                placement.y -= initSpacing;
+            }
+            else
+            {
+                placement.x += initSpacing;
+            }
+            clothNodes.Add(go);
+        }
+    }
+    
+    private void AttachSprings()
+    {
+        GameObject po = GameObject.Find("TheSprings");
+        if (po == null)
+        {
+            po = new GameObject("TheSprings");
+            po.transform.parent = gameObject.transform;
+        }
+
+        for (int i = 0; i < clothNodes.Count ; i++)
+        {
+            //check to see is the last node is on the same row as current // if true spring to left node
+
+            if ((i > clothWidth - 1) && (clothNodes[i - clothWidth])) // spring to above node
+            {
+                GameObject t = new GameObject("Spring");
+                t.AddComponent<Spring>();
+                t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - clothWidth], springCon, dampCon);
+
+                t.transform.parent = po.transform;
+
+                clothSprings.Add(t);
+            }
+
+
+            if ((i > 0) && (i % clothWidth != 0))  // spring to left node
+            {
+                GameObject t = new GameObject("Spring");
+
+                t.AddComponent<Spring>();
+                t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - 1], springCon, dampCon);
+
+                t.transform.parent = po.transform;
+
+                clothSprings.Add(t);
+            }
+
+
+            if ((i % clothWidth != clothWidth - 1) && i >= clothWidth) // spring to above right node
+            {
+                GameObject t = new GameObject("Spring");
+                t.AddComponent<Spring>();
+                t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - clothWidth + 1], springCon, dampCon);
+
+                t.transform.parent = po.transform;
+
+                clothSprings.Add(t);
+            }
+
+            if ((i % clothWidth != 0) && i >= clothWidth) // spring to above left node
+            {
+                GameObject t = new GameObject("Spring");
+                t.AddComponent<Spring>();
+                t.GetComponent<Spring>().MakeSpring(clothNodes[i], clothNodes[i - clothWidth - 1], springCon, dampCon);
+
+                t.transform.parent = po.transform;
+
+                clothSprings.Add(t);
+            }
+        }
+    }
+
+    private void MakeTriangles()
+    {
+        for (int i = 0; i < clothNodes.Count; i++)
+        {
+            // Not the Left most collumn    // Not top row
+            // Grab upper left triangle 
+            if((i % clothWidth != 0) && (i >= clothWidth))
+            {
+                ClothAeroTriangle tt = new ClothAeroTriangle();
+
+                tt.nodeA = clothNodes[i];
+                tt.nodeB = clothNodes[i -1];
+                tt.nodeC = clothNodes[i - clothWidth];
+
+                aeroTriangles.Add(tt);
+            }
+
+            // Not the Right most collumn   // Not bottom row
+            // Grab lower right triangle 
+            if ((i % clothWidth != clothWidth - 1) && (i < clothNodes.Count - clothWidth))
+            {
+                ClothAeroTriangle tt = new ClothAeroTriangle();
+
+                tt.nodeA = clothNodes[i];
+                tt.nodeB = clothNodes[i + 1];
+                tt.nodeC = clothNodes[i + clothWidth];
+                
+                aeroTriangles.Add(tt);
+            }
+        }
+    }
+
+    [ContextMenu("Create Cloth")]
+    public void CreateCloth()
+    {
+        foreach(GameObject n in clothNodes)
+        {
+            DestroyImmediate(n);
+        }
+        foreach (GameObject s in  clothSprings)
+        {
+            DestroyImmediate(s);
+        }
+        clothNodes      = new List<GameObject>();
+        clothSprings    = new List<GameObject>();
+        aeroTriangles   = new List<ClothAeroTriangle>();
+
+        SpawnNodes();
+        AttachSprings();
+        MakeTriangles();
+
+        // lock corners
+        //clothNodes[0].GetComponent<ClothNode>().locked = true;
+        //clothNodes[clothWidth - 1].GetComponent<ClothNode>().locked = true;
+        //clothNodes[clothWidth / 2 - 1].GetComponent<ClothNode>().locked = true;
+        for (int i = 0; i < clothNodes.Count; i++)
+        {
+            if ((i < clothWidth) || (i > clothNodes.Count - (clothWidth - 1)))
+            {
+                clothNodes[i].GetComponent<ClothNode>().locked = true;
+            }
+            if ((i % clothWidth == 0) || (i % clothWidth == clothWidth - 1))
+            {
+                clothNodes[i].GetComponent<ClothNode>().locked = true;
+            }
+        }
+
+    }
+  
+    // Slider Functions  /////////////////
+
+    public void SetGravityMod(UnityEngine.UI.Slider slider)
+    {
+        gravityMod = (float)slider.value;
+    }
+
+    public void SetDampenCon(UnityEngine.UI.Slider slider)
+    {
+        dampCon = (float)slider.value;
+    }
+
+    public void SetSpringCon(UnityEngine.UI.Slider slider)
+    {
+        springCon = (float)slider.value;
+    }
+
+    public void SetWind_x(UnityEngine.UI.Slider slider)
+    {
+        wind.x = (float)slider.value;
+    }
+
+    public void SetWind_y(UnityEngine.UI.Slider slider)
+    {
+        wind.y = (float)slider.value;
+    }
+
+    public void SetWind_z(UnityEngine.UI.Slider slider)
+    {
+        wind.z = (float)slider.value;
+    }
+
+    public void SetClothWidth(UnityEngine.UI.Slider slider)
+    {
+        clothWidth = (int)slider.value;
+    }
+
+    public void SetClothHeight(UnityEngine.UI.Slider slider)
+    {
+        clothHeight = (int)slider.value;
+    }
+
+    //////////////////////////////////////
+
+    private GameObject collideObj;
+    private RaycastHit rayHit;
+    private float distance;
+    private Vector3 objPos;
+    public void UpdateMouse()
+    {
+        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        var hit = Physics.Raycast(ray.origin, ray.direction, out rayHit);
+
+        if (Input.GetKey(KeyCode.Mouse0))
+        {
+            if (hit)
+            {
+                collideObj = rayHit.collider.gameObject;
+                distance = rayHit.distance;
+            }
+            objPos = ray.origin + distance * ray.direction;
+            collideObj.transform.position = new Vector3(objPos.x, objPos.y, collideObj.transform.position.z);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Mouse1))
+        {
+            collideObj.GetComponent<ClothNode>().ToggleLock();
+        }
+        if (Input.GetKeyUp(KeyCode.Mouse0))
+        {
+            collideObj = null;
+        }
+        //collideObj = new GameObject();
+    }
+
+
+    //////////////////////////////////////
+        
+
+    void FixedUpdate()
+    {
+        UpdateMouse();
+
+        foreach (GameObject s in clothSprings)  // Updating Springs
+        {
+            if (s == null)
+            {
+                clothSprings.Remove(s);
+                break;
+            }
+            else
+            {
+                Spring t = s.GetComponent<Spring>();    // temp 
+                t.springConstant = springCon;
+                t.damperConstant = dampCon;
+                t.UpdateSpring();
+
+            }
+        }
+
+        foreach (GameObject n in clothNodes) // Updating Nodes
+        {
+            n.GetComponent<ClothNode>().UpdateClothNode(gravityMod);
+        }
+
+        foreach (ClothAeroTriangle t in aeroTriangles)
+        {
+            t.ComputeTriangleForces(wind, density, drag);
+
+            if ((Vector3.Distance(t.nodeA.transform.position, t.nodeB.transform.position) > 10) || (Vector3.Distance(t.nodeA.transform.position, t.nodeC.transform.position) > 10) || (Vector3.Distance(t.nodeB.transform.position, t.nodeC.transform.position) > 10))
+            {
+                aeroTriangles.Remove(t);
+            }
+        }
+    }
+
+    [SerializeField]
+    private int clothWidth = 2;     // Numbers of nodes in the width
+    [SerializeField]
+    private int clothHeight = 2;    // Numbers of nodes in the height
+    [SerializeField]
+    private float initSpacing;      // Initial displacement
+    [SerializeField]
+    GameObject clothNodePrefab;     // tester Prefab
+
+    [SerializeField]
+    private float gravityMod = 1;
+
+    public Vector3 wind = new Vector3(0,0,0);
+
+    // Spring Variables
+    [SerializeField]
+    private float springCon = 10;
+    [SerializeField]
+    private float dampCon = -2;
+
+    public float density;
+    public float drag;
+
+
+    public List<GameObject> clothNodes;
+    public List<GameObject> clothSprings;
+    public List<ClothAeroTriangle> aeroTriangles;
+}
+"
 	</p>
 	
     <script type='text/javascript'>
