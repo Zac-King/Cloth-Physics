@@ -19,86 +19,86 @@
     <p class="footer">&laquo; created with <a href="http://unity3d.com/" title="Go to unity3d.com">Unity</a> &raquo;</p>
 	<p>
 	"Cloth Physics"
-	"I.0: Requirements Documentation
-
-I.1: Description of the problem
-Name: Cloth physics simulation
-Problem Statement: Implement a system that simulates cloth like behavior when forces are applied to it by use of springs.
-
-I.2: Input Information
-Name: Gravity Mod - Slider
-Description: Slider bar located in the lower left corner of the user display, makes use of the SetGravityMod() function located in the ClothPhysicsTest.cs. Allowing the user to edit the Gravity at runtime.
-
-Name: Spring
-Description: Slider bar that changes the springCon of all the springs in clothSprings
-
-Name: Dampen
-Description: Slider bar that changes the springDamp of all the springs in clothSprings
-
-Name: Width
-Description: Slider, Controls the desired cloth width 
-
-Name: Height
-Description: Slider, Controls the desired cloth height
-
-Name: Reset Cloth
-Description: Button that destroys the old cloth and spawns a new one
-
-I.3: Output Information
-Visual display of a cloth like behavior applied to a grid of particles.
-
-I.4: User Interface Information
-Sliders
-Use to change values at run time
-
-Mouse controls
-Left click and drag to move the clicked node. While left clicking right click to lock or unlock node.
-
-II.0: Design Documentation
-
-II.1 System Architecture Description
-The application makes use of 3 scripts controlling the force calculations. ClothNode.cs contains the particle information, as well as the UpdateClothNode() Function to apply the changes to information. The Spring.cs contains all the sping information as well as the 2 particles the spring is attached to. Both of which are called in the ClothPhysicsTest.cs which manages all the clothNodes, as well as all the clothSprings. 
-
-II.2: Information about the functions
-
-File: ClothNode.cs
-Class: ClothNode
-
-Data Members:
-
-Name: locked
-Type: bool	- public
-Description: Value to determine whether or not node will act as a cloth Anchor, and be unmoved by other forces.
-
-Name: mass
-Type: float	- public
-Description:  Particle mass, in use in Force calculations (Force = mass * acceleration)
-
-Name: acceleration
-Type: Vector3	- public
-Description: 
-
-Name: velocity
-Type: Vector3	- public
-Description: Applied to the node position 
-
-Name: force
-Type: Vector3	- public
-Description: sum of combined forces 
-
-Name: gravity
-Type: Vector3	- public
-Description: downward force to be applied to the force variable. Used to simulate real world gravitation force. ( 0, -9. 0 )
-
-Function: UpdateClothNode
-Parameters: float _gravMod
-Description: Apply motion to node’s position if !locked
-Return: void
-
-Function: ToggleLock
-Parameters: self
-Description: Invert the locked boolean based on current value
-Return: void
+	"I.0: Requirements Documentation<br>
+<br>
+I.1: Description of the problem<br>
+Name: Cloth physics simulation<br>
+Problem Statement: Implement a system that simulates cloth like behavior when forces are applied to it by use of springs.<br>
+<br>
+I.2: Input Information<br>
+Name: Gravity Mod - Slider<br>
+Description: Slider bar located in the lower left corner of the user display, makes use of the SetGravityMod() function located in the ClothPhysicsTest.cs. Allowing the user to edit the Gravity at runtime.<br>
+<br>
+Name: Spring<br>
+Description: Slider bar that changes the springCon of all the springs in clothSprings<br>
+<br>
+Name: Dampen<br>
+Description: Slider bar that changes the springDamp of all the springs in clothSprings<br>
+<br>
+Name: Width<br>
+Description: Slider, Controls the desired cloth width <br>
+<br>
+Name: Height<br>
+Description: Slider, Controls the desired cloth height<br>
+<br>
+Name: Reset Cloth<br>
+Description: Button that destroys the old cloth and spawns a new one<br>
+<br>
+I.3: Output Information<br>
+Visual display of a cloth like behavior applied to a grid of particles.<br>
+<br>
+I.4: User Interface Information<br>
+Sliders<br>
+Use to change values at run time<br>
+<br>
+Mouse controls<br>
+Left click and drag to move the clicked node. While left clicking right click to lock or unlock node.<br>
+<br>
+II.0: Design Documentation<br>
+<br>
+II.1 System Architecture Description<br>
+The application makes use of 3 scripts controlling the force calculations. ClothNode.cs contains the particle information, as well as the UpdateClothNode() Function to apply the changes to information. The Spring.cs contains all the sping information as well as the 2 particles the spring is attached to. Both of which are called in the ClothPhysicsTest.cs which manages all the clothNodes, as well as all the clothSprings.<br> 
+<br>
+II.2: Information about the functions<br>
+<br>
+File: ClothNode.cs<br>
+Class: ClothNode<br>
+<br>
+Data Members:<br>
+<br>
+Name: locked<br>
+Type: bool	- public<br>
+Description: Value to determine whether or not node will act as a cloth Anchor, and be unmoved by other forces.<br>
+<br>
+Name: mass<br>
+Type: float	- public<br>
+Description:  Particle mass, in use in Force calculations (Force = mass * acceleration)<br>
+<br>
+Name: acceleration<br>
+Type: Vector3	- public<br>
+Description: <br>
+<br>
+Name: velocity<br>
+Type: Vector3	- public<br>
+Description: Applied to the node position <br>
+<br>
+Name: force<br>
+Type: Vector3	- public<br>
+Description: sum of combined forces <br>
+<br>
+Name: gravity<br>
+Type: Vector3	- public<br>
+Description: downward force to be applied to the force variable. Used to simulate real world gravitation force. ( 0, -9. 0 )<br>
+<br>
+Function: UpdateClothNode<br>
+Parameters: float _gravMod<br>
+Description: Apply motion to node’s position if !locked<br>
+Return: void<br>
+<br>
+Function: ToggleLock<br>
+Parameters: self<br>
+Description: Invert the locked boolean based on current value<br>
+Return: void<br>
 
 File: Spring.cs
 
