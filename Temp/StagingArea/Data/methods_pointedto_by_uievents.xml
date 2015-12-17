@@ -1,0 +1,15 @@
+<linker>
+	<assembly fullname="Assembly-CSharp">
+		<type fullname="ClothPhysicTest">
+			<method name="CreateCloth"/>
+			<method name="SetWind_x"/>
+			<method name="SetSpringCon"/>
+			<method name="SetDampenCon"/>
+			<method name="SetClothHeight"/>
+			<method name="SetWind_y"/>
+			<method name="SetClothWidth"/>
+			<method name="SetWind_z"/>
+			<method name="SetGravityMod"/>
+		</type>
+	</assembly>
+</linker>
