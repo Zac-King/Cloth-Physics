@@ -21,14 +21,21 @@ public class ClothAeroTriangle
         Vector3 normal = r2r1crossr3r1 / r2r1crossr3r1.magnitude;
 
         float area = (0.5f * Vector3.Dot(triangleVelocity, normal) * triangleVelocity.magnitude) / r2r1crossr3r1.magnitude;
-        //float effectiveArea = area * Vector3.Dot(triangleVelocity, normal) / triangleVelocity.magnitude;
-
+        
         Vector3 forceAero = -0.5f * drag * density * area * r2r1crossr3r1;
         forceAero /= 3.0f;
-
-        a.force += forceAero ;
-        b.force += forceAero ;
-        c.force += forceAero ;
+        if (!a.TouchingFloor())
+        {
+            a.force += forceAero;
+        }
+        if (!b.TouchingFloor())
+        {
+            b.force += forceAero;
+        }
+        if (!c.TouchingFloor())
+        {
+            c.force += forceAero;
+        }
     }
     
     [SerializeField]

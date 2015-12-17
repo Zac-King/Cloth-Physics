@@ -21,7 +21,9 @@ public class ClothPhysicTest : MonoBehaviour
 
             go.transform.parent = po.transform; // parenting it to the Game Object with this script
             go.transform.localPosition = placement;          // Assigning 
-            
+
+            go.GetComponent<ClothNode>().nFloor = floor;
+
             if ((i % clothWidth) == 0 )
             {
                 placement.x = 0;
@@ -149,20 +151,20 @@ public class ClothPhysicTest : MonoBehaviour
         MakeTriangles();
 
         // lock corners
-        clothNodes[0].GetComponent<ClothNode>().locked = true;
-        clothNodes[clothWidth - 1].GetComponent<ClothNode>().locked = true;
-        clothNodes[clothWidth / 2 - 1].GetComponent<ClothNode>().locked = true;
-        //for (int i = 0; i < clothNodes.Count; i++)
-        //{
-        //    if ((i < clothWidth) || (i > clothNodes.Count - (clothWidth - 1)))
-        //    {
-        //        clothNodes[i].GetComponent<ClothNode>().locked = true;
-        //    }
-        //    if ((i % clothWidth == 0) || (i % clothWidth == clothWidth - 1))
-        //    {
-        //        clothNodes[i].GetComponent<ClothNode>().locked = true;
-        //    }
-        //}
+        //clothNodes[0].GetComponent<ClothNode>().locked = true;
+        //clothNodes[clothWidth - 1].GetComponent<ClothNode>().locked = true;
+        //clothNodes[clothWidth / 2 - 1].GetComponent<ClothNode>().locked = true;
+        for (int i = 0; i < clothNodes.Count; i++)
+        {
+            if ((i < clothWidth) || (i > clothNodes.Count - clothWidth))
+            {
+                clothNodes[i].GetComponent<ClothNode>().locked = true;
+            }
+            if ((i % clothWidth == 0) || (i % clothWidth == clothWidth - 1))
+            {
+                clothNodes[i].GetComponent<ClothNode>().locked = true;
+            }
+        }
 
     }
   
